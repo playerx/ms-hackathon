@@ -1,0 +1,76 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Client</title>
+    @Scripts.Render("~/bundles/js")
+</head>
+<body>
+    <div id="Info">
+
+    </div>
+    <script>
+
+        var ax, ay;
+        var maxAX, minAX;
+        window.ondevicemotion = function (e) {
+
+            //ax = event.accelerationIncludingGravity.x * 5;
+            //ay = event.accelerationIncludingGravity.y * 5;
+
+            var xyz = [e.accelerationIncludingGravity.x, e.accelerationIncludingGravity.y, e.accelerationIncludingGravity.z];
+
+            //var temp = Math.sqrt(Math.pow(parseFloat(xyz[0].toFixed(5)) * 9.8, 2) + Math.pow(parseFloat(xyz[1].toFixed(5)) * 9.8, 2) + Math.pow(parseFloat(xyz[2].toFixed(5)) * 9.8, 2));
+            var temp = xyz[0] + xyz[1] + xyz[2] / 3;
+
+            if (!maxAX || maxAX < temp)
+                maxAX = temp;
+
+            if (!minAX || minAX > temp)
+                minAX = temp;
+
+
+            //document.getElementById("accelerationX").innerHTML = e.accelerationIncludingGravity.x;
+            //document.getElementById("accelerationY").innerHTML = e.accelerationIncludingGravity.y;
+            //document.getElementById("accelerationZ").innerHTML = e.accelerationIncludingGravity.z;
+
+            //if (e.rotationRate) {
+            //    document.getElementById("rotationAlpha").innerHTML = e.rotationRate.alpha;
+            //    document.getElementById("rotationBeta").innerHTML = e.rotationRate.beta;
+            //    document.getElementById("rotationGamma").innerHTML = e.rotationRate.gamma;
+            //}
+        }
+
+        setInterval(function () {
+
+            try {
+                if (!minAX || !maxAX) return;
+
+                var diff = maxAX - minAX;
+
+                diff *= diff;
+
+                minAX = maxAX = 0;
+
+                var move = diff * 100 / 500;
+
+                $('#Info').html('MaxAX: ' + maxAX + ' MinAX: ' + minAX + ' move: ' + move.toFixed(0))
+
+                $.get('http://ms-hackathon.azurewebsites.net/home/PushTemperature/' + move.toFixed(0), function () {
+
+                });
+            }
+            catch (err) {
+                $('#Info').html(err);
+            }
+
+        }, 300);
+
+    </script>
+</body>
+</html>

@@ -27,6 +27,11 @@ namespace MS.Hackathon.Controllers
 
             return new EmptyResult();
         }
+
+        public ActionResult Client()
+        {
+            return View();
+        }
     }
 
     public class RealtimeHub : Hub
